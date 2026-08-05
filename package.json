@@ -1,0 +1,14 @@
+{
+  "name": "sistemareservas",
+  "version": "1.0.0",
+  "description": "Administrador de servicios para un sistema de turnos y reservas",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
