@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "Consulta médica",
+    "description": "Atención general",
+    "duration": 30,
+    "price": 5000,
+    "category": "salud",
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Consulta médica",
+    "description": "Traumatología",
+    "duration": 35,
+    "price": 5500,
+    "category": "salud",
+    "available": false
+  },
+  {
+    "id": 3,
+    "name": "Consulta médica",
+    "description": "Nutricionista",
+    "duration": 25,
+    "price": 4000,
+    "category": "salud",
+    "available": true
+  }
+]

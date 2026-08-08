@@ -5,12 +5,34 @@ export default class ServiceManager {
         this.path = path;
     }
 
-    async getServices() {
+    async getServices(filtros = {}) {
         try {
             const data = await fs.readFile(this.path, "utf-8");
-            return JSON.parse(data);
+
+            let servicios = JSON.parse(data);
+
+            if (filtros.category) {
+                servicios = servicios.filter(
+                    (servicio) =>
+                        servicio.category === filtros.category
+                );
+            }
+
+            if (filtros.available !== undefined) {
+                servicios = servicios.filter(
+                    (servicio) =>
+                        servicio.available ===
+                        (filtros.available === "true")
+                );
+            }
+
+            return servicios;
         } catch (error) {
-            console.error("Error al leer el archivo:", error.message);
+            console.error(
+                "Error al leer los servicios:",
+                error.message
+            );
+
             return [];
         }
     }
@@ -25,42 +47,44 @@ export default class ServiceManager {
         return servicio || null;
     }
 
-    async addService(datosServicio) {
+    async addService(serviceData) {
         const servicios = await this.getServices();
 
         const {
-            nombre,
-            descripcion,
-            duracion,
-            precio,
-            categoria,
-            disponible
-        } = datosServicio;
+            name,
+            description,
+            duration,
+            price,
+            category,
+            available
+        } = serviceData;
 
         if (
-            !nombre ||
-            !descripcion ||
-            duracion === undefined ||
-            precio === undefined ||
-            !categoria ||
-            disponible === undefined
+            !name ||
+            !description ||
+            duration === undefined ||
+            price === undefined ||
+            !category ||
+            available === undefined
         ) {
             throw new Error("Todos los campos son obligatorios.");
         }
 
         const nuevoId =
             servicios.length > 0
-                ? servicios[servicios.length - 1].id + 1
+                ? Math.max(
+                    ...servicios.map((servicio) => servicio.id)
+                ) + 1
                 : 1;
 
         const nuevoServicio = {
             id: nuevoId,
-            nombre,
-            descripcion,
-            duracion,
-            precio,
-            categoria,
-            disponible
+            name,
+            description,
+            duration,
+            price,
+            category,
+            available
         };
 
         servicios.push(nuevoServicio);
@@ -73,7 +97,7 @@ export default class ServiceManager {
         return nuevoServicio;
     }
 
-    async updateService(id, datosActualizados) {
+    async updateService(id, updatedData) {
         const servicios = await this.getServices();
 
         const indice = servicios.findIndex(
@@ -84,11 +108,12 @@ export default class ServiceManager {
             return null;
         }
 
-        delete datosActualizados.id;
+        const { id: ignoredId, ...datosSinId } = updatedData;
 
         servicios[indice] = {
             ...servicios[indice],
-            ...datosActualizados
+            ...datosSinId,
+            id: servicios[indice].id
         };
 
         await fs.writeFile(
